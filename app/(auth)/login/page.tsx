@@ -102,7 +102,8 @@ export default function Home() {
 
         {/* Login card */}
         <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
-          <h1 className="text-2xl font-bold text-center mb-8">Admin Login</h1>
+          <h1 className="text-2xl font-bold text-center mb-4">User Login</h1>
+          <p className='mb-4 text-center text-gray-500'>Welcome back! Login to continue</p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
