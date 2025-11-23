@@ -106,32 +106,41 @@ export default function AirportArrivalPage() {
   };
 
   const confirm = async () => {
-    if (!selected) return;
-    setSubmitting(true);
-    try {
-      const token = document.cookie.split('; ').find(c => c.startsWith('accessToken='))?.split('=')[1];
-      const res = await fetch(`${API}/api/checkin-details/${selected._id}/arrival`, {
-        method: 'PUT',
-        credentials: 'include',
+  if (!selected) return;
+  setSubmitting(true);
+
+  try {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
+
+    const res = await fetch(
+      `${API}/api/checkin-details/${selected._id}/arrival`,
+      {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-      });
+      }
+    );
 
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.message || 'Failed');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message || "Failed");
 
-      await mutate(`${API}/api/checkin-details`);
-      setShowConfirm(false);
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 1800);
-    } catch (err) {
-      alert((err as any).message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    await mutate(`${API}/api/checkin-details`);
+    setShowConfirm(false);
+    setShowSuccess(true);
+
+    setTimeout(() => setShowSuccess(false), 1800);
+  } catch (err: any) {
+    alert(err.message || "Something went wrong");
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   return (
 <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4">

@@ -123,40 +123,41 @@ export default function PreviewRoomPage() {
   };
 
   const confirm = async () => {
-    if (!selected) return;
-    setSubmitting(true);
+  if (!selected) return;
+  setSubmitting(true);
 
-    try {
-      const token = document.cookie
-        .split('; ')
-        .find((c) => c.startsWith('accessToken='))?.split('=')[1];
+  try {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
 
-      const res = await fetch(
-        `${API}/api/checkin-details/${selected._id}/presentation`,
-        {
-          method: 'PUT',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-        }
-      );
+    const res = await fetch(
+      `${API}/api/checkin-details/${selected._id}/presentation`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      }
+    );
 
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.message || 'Failed');
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message || "Failed");
 
-      await mutate(`${API}/api/checkin-details`);
+    await mutate(`${API}/api/checkin-details`);
+    setShowConfirm(false);
+    setShowSuccess(true);
 
-      setShowConfirm(false);
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 1800);
-    } catch (err: any) {
-      alert(err.message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    setTimeout(() => setShowSuccess(false), 1800);
+  } catch (err: any) {
+    alert(err.message || "Something went wrong");
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   return (
 <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4">
