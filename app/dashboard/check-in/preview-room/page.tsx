@@ -43,10 +43,24 @@ type Item = {
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 const fetcher = async (url: string) => {
-  const res = await fetch(url, { credentials: 'include' });
-  if (!res.ok) throw new Error('Failed to fetch');
-  return (await res.json()).data;
+  const token = typeof window !== "undefined"
+    ? localStorage.getItem("accessToken")
+    : null;
+
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch");
+
+  const json = await res.json();
+  return json.data || [];
 };
+
 
 export default function PreviewRoomPage() {
   const { data, isLoading } = useSWR(`${API}/api/checkin-details`, fetcher);

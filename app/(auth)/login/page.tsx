@@ -5,7 +5,14 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plane, GraduationCap, Building, CheckCircle, Eye, EyeOff } from 'lucide-react';
+import {
+  Plane,
+  GraduationCap,
+  Building,
+  CheckCircle,
+  Eye,
+  EyeOff
+} from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,21 +39,24 @@ export default function Home() {
   });
 
   // ===========================================================
-  // 🎯 LOGIN HANDLER — NEW VERSION (NO manual accessToken cookie)
+  // 🎯 LOGIN HANDLER — save accessToken to localStorage
   // ===========================================================
   const onSubmit = async (data: any) => {
     try {
       setValidated(false);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // VERY IMPORTANT
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password
-        })
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/users/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include", // refreshToken cookie stored automatically
+          body: JSON.stringify({
+            email: data.email,
+            password: data.password
+          })
+        }
+      );
 
       const result = await res.json();
 
@@ -55,10 +65,17 @@ export default function Home() {
         return;
       }
 
-      // SUCCESS — animation trigger
+      // ================================
+      // ⭐ SAVE ACCESS TOKEN (VERY IMPORTANT)
+      // ================================
+      if (result.accessToken) {
+        localStorage.setItem("accessToken", result.accessToken);
+      }
+
+      // success animation
       setValidated(true);
 
-      // Redirect user AFTER showing tick
+      // redirect after validation animation
       setTimeout(() => router.push("/dashboard"), 900);
 
     } catch (error) {
@@ -70,7 +87,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="container mx-auto px-4 py-8">
 
-        {/* 3 ICON BUBBLES */}
+        {/* Top icons */}
         <div className="flex justify-center items-center gap-6 mb-12">
           <div className="w-20 h-20 bg-orange-600 rounded-full flex items-center justify-center">
             <Plane className="w-10 h-10 text-white" />
@@ -83,20 +100,20 @@ export default function Home() {
           </div>
         </div>
 
-        {/* LOGIN BOX */}
+        {/* Login card */}
         <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8">
           <h1 className="text-2xl font-bold text-center mb-8">Admin Login</h1>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
 
-            {/* EMAIL */}
+            {/* Email */}
             <div className="space-y-2">
               <Label>Email</Label>
               <Input type="email" placeholder="Enter Email" {...register("email")} />
               {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
             </div>
 
-            {/* PASSWORD */}
+            {/* Password */}
             <div className="space-y-2">
               <Label>Password</Label>
               <div className="relative">
@@ -123,14 +140,14 @@ export default function Home() {
               </a>
             </div>
 
-            {/* CHECKBOX */}
+            {/* Checkbox */}
             <div className="flex items-center gap-2">
               <Input type="checkbox" className="w-4 h-4 accent-green-600" {...register("robot")} />
               <Label className="text-sm text-gray-600">I'm not a robot</Label>
             </div>
             {errors.robot && <p className="text-red-600 text-sm">{errors.robot.message}</p>}
 
-            {/* BUTTON */}
+            {/* Button */}
             <Button
               type="submit"
               disabled={isSubmitting}
