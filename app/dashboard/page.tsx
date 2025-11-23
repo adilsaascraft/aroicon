@@ -3,11 +3,9 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
-  Plane,
   Hotel,
   Users,
   DoorOpen,
-  Building,
   LogOut,
   PlaneLanding,
   PlaneTakeoff,
@@ -37,26 +35,31 @@ export default function Dashboard() {
 
   // LOGOUT
   const handleLogout = async () => {
-    try {
-      const accessToken = document.cookie
-        .split("; ")
-        .find((c) => c.startsWith("accessToken="))
-        ?.split("=")[1];
+  try {
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("accessToken")
+        : null;
 
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/logout`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        credentials: "include",
-      });
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/logout`, {
+      method: "POST",
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      }
+    });
 
-      document.cookie = "accessToken=; Path=/; Max-Age=0;";
-      window.location.href = "/";
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
+    // Remove token from localStorage
+    localStorage.removeItem("accessToken");
+
+    // Redirect to login
+    window.location.href = "/";
+  } catch (error) {
+    console.error("Logout failed:", error);
+    localStorage.removeItem("accessToken");
+    window.location.href = "/";
+  }
+};
+
 
   // CHECK-IN CARDS CONFIG
   const checkInPoints = [
