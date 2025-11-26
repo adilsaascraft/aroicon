@@ -63,7 +63,7 @@ const fetcher = async (url: string) => {
 
 
 export default function HallSessionPage() {
-  const { data, isLoading } = useSWR(`${API}/api/checkin-details`, fetcher);
+  const { data, isLoading } = useSWR(`${API}/api/checkin-details/topic/exist`, fetcher);
 
   const items: Item[] = data || [];
   const [searchQuery, setSearchQuery] = useState('');
@@ -144,7 +144,7 @@ export default function HallSessionPage() {
     const json = await res.json();
     if (!res.ok) throw new Error(json.message || "Failed");
 
-    await mutate(`${API}/api/checkin-details`);
+    await mutate(`${API}/api/checkin-details/topic/exist`);
     setShowConfirm(false);
     setShowSuccess(true);
 
