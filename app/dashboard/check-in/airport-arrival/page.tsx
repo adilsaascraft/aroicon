@@ -142,21 +142,7 @@ export default function AirportArrivalPage() {
 };
 
 
-const formatDate = (value?: string) => {
-  if (!value) return "-";
-  const date = new Date(value);
-  return date.toISOString().split("T")[0]; // YYYY-MM-DD
-};
 
-const formatTime = (value?: string) => {
-  if (!value) return "-";
-  const date = new Date(value);
-  return date.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
-};
 
 
   return (
@@ -234,12 +220,12 @@ const formatTime = (value?: string) => {
               <div className="space-y-2 mb-4 p-3 bg-blue-50 rounded-lg text-sm">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-blue-600" />
-                  <strong>Start:</strong> {formatTime(m.arrivalDate)}
+                  <strong>Date:</strong> {m.arrivalDate}
                 </div>
 
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-blue-600" />
-                  <strong>Time:</strong> {formatTime(m.arrivalTime)}
+                  <strong>Time:</strong> {m.arrivalTime}
                 </div>
 
                 <div className="flex items-center gap-2">
