@@ -159,6 +159,19 @@ export default function PreviewRoomPage() {
 };
 
 
+const formatDate = (value?: string) => {
+  if (!value) return "-";
+  const date = new Date(value);
+  return date.toISOString().split("T")[0]; // YYYY-MM-DD
+};
+
+const formatTime = (value?: string) => {
+  if (!value) return "-";
+  const date = new Date(value);
+  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); // HH:MM
+};
+
+
   return (
 <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4">
   <div className="max-w-6xl mx-auto">
@@ -246,17 +259,17 @@ export default function PreviewRoomPage() {
 
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-red-600" />
-                      <strong>Talk Date:</strong> {m.talkDate}
+                      <strong>Talk Date:</strong> {formatDate(m.talkDate)}
                     </div>
 
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-red-600" />
-                      <strong>Start:</strong> {m.talkStartTime}
+                      <strong>Start:</strong> {formatTime(m.talkStartTime)}
                     </div>
 
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-red-600" />
-                      <strong>End:</strong> {m.talkEndTime}
+                      <strong>End:</strong> {formatTime(m.talkEndTime)}
                     </div>
 
                     <div className="flex items-center gap-2">
