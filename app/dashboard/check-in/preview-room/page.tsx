@@ -168,8 +168,13 @@ const formatDate = (value?: string) => {
 const formatTime = (value?: string) => {
   if (!value) return "-";
   const date = new Date(value);
-  return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); // HH:MM
+  return date.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 };
+
 
 
   return (
